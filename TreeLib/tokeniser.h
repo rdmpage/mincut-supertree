@@ -74,7 +74,8 @@ class Tokeniser
 #else
 	std::istream&		in;
 #endif
-    char 			curChar;
+    //char 			curChar;
+    //char 			putBackChar;
 	std::string		token;
 	std::string		comment;
 #if (defined( __MWERKS__ ) || (defined __BORLANDC__  && (__BORLANDC__ < 0x0550)))
@@ -94,6 +95,11 @@ class Tokeniser
 
 
 public:
+
+    char 			curChar;
+    char 			putBackChar;
+
+
 	enum tokentype
 	{
 		EMPTY,
@@ -108,11 +114,11 @@ public:
 		SEMICOLON,		// ;
 		EQUALS,			// =
 		MINUS,			// -
-		ASTERIX,			// *
+		ASTERIX,		// *
 		BACKSLASH,		// /
 		LCURLY,			// {
 		RCURLY,			// }
-		DOUBLEQUOTE,		// "
+		DOUBLEQUOTE,	// "
 		BANG,			// !
 		HASH,			// #
 		COLON			// :
@@ -140,7 +146,7 @@ public:
 	virtual bool IsPunctuation (char ch);
 	virtual bool IsWhiteSpace (char ch);
 	bool 		ParseComment ();
-	tokentype		ParseNumber ();
+	tokentype	ParseNumber ();
 	bool 		ParseString ();
 	bool		ParseToken ();
 	// don't use these functions as they will bugger up keeping track of

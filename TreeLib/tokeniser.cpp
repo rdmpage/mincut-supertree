@@ -45,12 +45,14 @@ Tokeniser::Tokeniser (std::istream& i ) : in(i)
 	putBuffer = '\0';
 #endif
 
+	putBackChar = '\0';
+
 }
 
 //------------------------------------------------------------------------------
 bool Tokeniser::IsPunctuation (char ch)
 {
-	char punctuation[22];
+	char punctuation[23];
 	punctuation[0]  = '(';
 	punctuation[1]  = ')';
 	punctuation[2]  = '[';
@@ -105,13 +107,22 @@ char Tokeniser::GetNextChar ()
 	else
 		ch = in.get();	
 #else
-	ch = in.get();
+
+	if (putBackChar == '\0')
+	{
+		ch = in.get();
+	}
+	else
+	{
+		ch = putBackChar;	
+	}
+	putBackChar = '\0';
 #endif
 	int failed = in.bad();
 	if( failed )
 		throw XTokeniser ( "Unknown error reading data file (check to make sure file exists)" );
 
-	//	cout << "[" << (char)ch << "]" << endl;
+	//std::cout << "[" << (char)ch << "]" << std::endl;
 
 	if( ch == 13 || ch == 10 )
 	{
@@ -151,19 +162,25 @@ char Tokeniser::GetNextChar ()
 Tokeniser::tokentype Tokeniser::GetNextToken ()
 {
 	tokentype TokenType = EMPTY;
-
-	while ((TokenType == EMPTY) && !in.bad() && !atEOF)
+	
+	while ((TokenType == EMPTY) 
+		&& !in.bad() 
+		&& !atEOF)
 	{
 		curChar = GetNextChar ();
+		
+		//std::cout << curChar << " GetNextChar" << std::endl;
 
 		if (IsWhiteSpace (curChar))
 		{
-		// skip white space
+			// skip white space
 		}
 		else
 		{
 			if (IsPunctuation (curChar))
 			{
+				//	std::cout << curChar << " IsPunctuation" << std::endl;
+			
  				// classify punctuation token
 				switch (curChar)
 				{
@@ -222,7 +239,7 @@ Tokeniser::tokentype Tokeniser::GetNextToken ()
 			}
 			else
 			{
-            			// It's either a number, or a string
+            	// It's either a number, or a string
 				if (isdigit (curChar))
 				{
 					TokenType = ParseNumber();
@@ -270,14 +287,14 @@ bool Tokeniser::ParseString ()
 				token += curChar;
 				lastChar = '\0';
 			}
-	        }
-	        else
-	        {
-		        	if (lastChar == '\'')
-		          {
-			// end of quoted string indicated by single quote that doesn't
-		                // follow another single quote
-		                done = true;
+	    }
+	    else
+	    {
+		    if (lastChar == '\'')
+		    {
+				// end of quoted string indicated by single quote that doesn't
+		        // follow another single quote
+		        done = true;
 			}
 			else
 			{
@@ -292,7 +309,9 @@ bool Tokeniser::ParseString ()
 #ifdef __MWERKS__
 	putBuffer = curChar;
 #else
-	in.putback (curChar);
+
+	putBackChar = curChar;
+	//in.putback (curChar);
 #endif
  	filecol--;
 	return (done);
@@ -309,9 +328,9 @@ Tokeniser::tokentype Tokeniser::ParseNumber ()
 		digit		= 0x0004, // 2
 		fraction	= 0x0008, // 3
 		expsymbol	= 0x0010, // 4
-		expsign	= 0x0020, // 5
+		expsign		= 0x0020, // 5
 		exponent 	= 0x0040, // 6
-		bad		= 0x0080,
+		bad			= 0x0080,
 		done		= 0x0100
     } state;
 
@@ -384,7 +403,8 @@ Tokeniser::tokentype Tokeniser::ParseNumber ()
 #ifdef __MWERKS__
 			putBuffer = curChar;
 #else
-			in.putback (curChar);
+			putBackChar = curChar;
+			//in.putback (curChar);
 #endif
 			if (!atEOL)
 				filecol--;
@@ -405,7 +425,8 @@ Tokeniser::tokentype Tokeniser::ParseNumber ()
 #ifdef __MWERKS__
 				putBuffer = curChar;
 #else
-				in.putback (curChar);
+				putBackChar = curChar;
+				//in.putback (curChar);
 #endif
 				if (!atEOL)
 					filecol--;
@@ -436,7 +457,8 @@ bool Tokeniser::ParseToken ()
 #ifdef __MWERKS__
 		putBuffer = curChar;
 #else
-		in.putback (curChar);
+		putBackChar = curChar;
+		//in.putback (curChar);
 #endif
 		filecol--;
 	}
