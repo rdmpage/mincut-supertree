@@ -17,10 +17,11 @@ Src		=	.
 libDirs	=	
 
 incDirs	=   \
+	-I/usr/local/include \
 	-ITreeLib/gport \
 	-ITreeLib
 
-LIBS	=	 -lGTL
+LIBS	=	 -L/usr/local/lib -lGTL
 C_FLAGS	=	-g
 
 
