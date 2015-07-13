@@ -1,0 +1,7 @@
+
+*.o
+
+
+# output
+*.gml
+*.tre
