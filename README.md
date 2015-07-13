@@ -13,7 +13,7 @@ The original software was written in 2002, see [http://darwin.zoology.gla.ac.uk/
 
 First install GTL (there is a version available [here](https://github.com/rdmpage/graph-template-library)). Then:
 
-   make Makefile
+   make
 
 ### Command line options
 
