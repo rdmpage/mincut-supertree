@@ -61,7 +61,7 @@ tokentype Parser::NextToken ()
 		}
 		else if (isalpha (ch))
 		{
-			while (isalnum (ch) || (ch == '_') || (ch == '.') && (pos < text.length()))
+			while ((isalnum (ch) || (ch == '_') || (ch == '.')) && (pos < text.length()))
 			{
 				if (ch == '_')
 					token += ' ';
@@ -208,7 +208,7 @@ tokentype Parser::ParseNumber ()
 				else
 					token += curChar;
             	curChar = GetNextChar ();
- 			} while (isalnum (curChar) || (curChar == '_') || (curChar == '.') && (pos < text.length()));
+ 			} while ((isalnum (curChar) || (curChar == '_') || (curChar == '.')) && (pos < text.length()));
 			result = STRING; //classify the token
 
     }
@@ -220,7 +220,7 @@ tokentype Parser::ParseNumber ()
 //------------------------------------------------------------------------------
 bool Parser::IsPunctuation (char ch)
 {
-	char punctuation[22];
+	char punctuation[23];
 	punctuation[0]  = '(';
 	punctuation[1]  = ')';
 	punctuation[2]  = '[';
